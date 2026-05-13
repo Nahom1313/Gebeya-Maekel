@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-
+import API_URL from '../../config/api';
 const AdminCreateProductPage = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -24,7 +24,7 @@ const AdminCreateProductPage = () => {
     try {
       setUploading(true);
       const { data } = await axios.post(
-        'http://localhost:5000/api/upload',
+        `${API_URL}/api/upload`,
         formData,
         {
           headers: {
@@ -85,7 +85,7 @@ const AdminCreateProductPage = () => {
     try {
       setLoading(true);
       await axios.post(
-        'http://localhost:5000/api/products',
+        `${API_URL}/api/products`,
         { name, description, price, category, image, countInStock },
         { headers: { Authorization: `Bearer ${user.token}` } }
       );

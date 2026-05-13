@@ -4,7 +4,7 @@ import { setUser } from '../redux/slices/authSlice';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
-
+import API_URL from '../config/api';
 const RegisterPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ const RegisterPage = () => {
     if (form.password !== form.confirmPassword) { setError(t('auth.passwords_match')); return; }
     try {
       setLoading(true);
-      const { data } = await axios.post('http://localhost:5000/api/auth/register', { name: form.name, email: form.email, password: form.password });
+      const { data } = await axios.post(`${API_URL}/api/auth/register`, { name: form.name, email: form.email, password: form.password });
       dispatch(setUser(data));
       navigate('/');
     } catch (err) {

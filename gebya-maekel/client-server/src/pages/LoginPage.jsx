@@ -4,7 +4,7 @@ import { setUser } from '../redux/slices/authSlice';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
-
+import API_URL from '../config/api';
 const LoginPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ const LoginPage = () => {
     if (!form.email || !form.password) { setError(t('auth.fill_fields')); return; }
     try {
       setLoading(true);
-      const { data } = await axios.post('http://localhost:5000/api/auth/login', form);
+      const { data } = await axios.post(`${API_URL}/api/auth/login`, form);
       dispatch(setUser(data));
       navigate('/');
     } catch (err) {

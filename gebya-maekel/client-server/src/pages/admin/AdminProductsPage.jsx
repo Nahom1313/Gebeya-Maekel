@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
-
+import API_URL from '../../config/api';
 const AdminProductsPage = () => {
   const { user } = useSelector(state => state.auth);
   const [products, setProducts] = useState([]);
@@ -11,7 +11,7 @@ const AdminProductsPage = () => {
 
   const fetchProducts = async () => {
     try {
-      const { data } = await axios.get('http://localhost:5000/api/products');
+      const { data } = await axios.get(`${API_URL}/api/products`);
       setProducts(data);
     } catch (err) {
       console.error(err);
@@ -26,7 +26,7 @@ const AdminProductsPage = () => {
     if (!window.confirm('Delete this product?')) return;
     try {
       setDeleting(id);
-      await axios.delete(`http://localhost:5000/api/products/${id}`, {
+      await axios.delete(`${API_URL}/api/products/${id}`, {
         headers: { Authorization: `Bearer ${user.token}` },
       });
       setProducts(prev => prev.filter(p => p._id !== id));

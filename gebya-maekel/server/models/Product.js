@@ -5,6 +5,7 @@ const reviewSchema = new mongoose.Schema({
   name: { type: String, required: true },
   rating: { type: Number, required: true },
   comment: { type: String, required: true },
+  isVerified: { type: Boolean, default: false },
 }, { timestamps: true });
 
 const productSchema = new mongoose.Schema({

@@ -17,6 +17,12 @@ import AdminProductsPage from './pages/admin/AdminProductsPage';
 import AdminCreateProductPage from './pages/admin/AdminCreateProductPage';
 import AdminEditProductPage from './pages/admin/AdminEditProductPage';
 import AdminOrdersPage from './pages/admin/AdminOrdersPage';
+import AdminUsersPage from './pages/admin/AdminUsersPage';
+import DeliveryPage from './pages/DeliveryPage';
+import AdminAnalyticsPage from './pages/admin/AdminAnalyticsPage';
+import AdminPromoPage from './pages/admin/AdminPromoPage';
+import Footer from './components/Footer';
+import NotFoundPage from './pages/NotFoundPage';
 import AIChatbot from './components/AIchatbot';
 
 function App() {
@@ -48,7 +54,13 @@ function App() {
       <Route path="/admin/products/create" element={<AdminRoute><AdminCreateProductPage /></AdminRoute>} />
       <Route path="/admin/products/edit/:id" element={<AdminRoute><AdminEditProductPage /></AdminRoute>} />
       <Route path="/admin/orders" element={<AdminRoute><AdminOrdersPage /></AdminRoute>} />
+      <Route path="/admin/users" element={<AdminRoute><AdminUsersPage /></AdminRoute>} />
+      <Route path="/delivery" element={<DeliveryPage />} />
+      <Route path="/admin/analytics" element={<AdminRoute><AdminAnalyticsPage /></AdminRoute>} />
+      <Route path="/admin/promo" element={<AdminRoute><AdminPromoPage /></AdminRoute>} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
+    <Footer />
     <AIChatbot />
   </div>
 );

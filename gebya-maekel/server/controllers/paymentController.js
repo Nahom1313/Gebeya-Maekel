@@ -1,45 +1,34 @@
 const axios = require('axios');
 const Order = require('../models/Order');
 
-// Initialize payment
 exports.initializePayment = async (req, res) => {
   try {
-    const { orderId } = req.body;
+    const { orderId, guestInfo } = req.body;
 
     const order = await Order.findById(orderId).populate('user', 'name email');
     if (!order) return res.status(404).json({ message: 'Order not found' });
 
-    console.log('Full order user:', order.user);
-    console.log('Email:', order.user.email);
-
     const txRef = `order-${orderId}-${Date.now()}`;
 
-    const nameParts = order.user.name.split(' ');
-    const firstName = nameParts[0] || 'Customer';
-    const lastName = nameParts[1] || 'User';
+    // Use guest info or user info
+    const customerName = order.user?.name || guestInfo?.name || 'Guest';
+    const customerEmail = order.user?.email || guestInfo?.email || 'guest@gebeyamaekel.com';
 
-    // 👇 console.log INSIDE the function
-    console.log('Sending to Chapa:', {
-      first_name: firstName,
-      last_name: lastName,
-      email: 'nahom@gmail.com',
-      amount: String(order.totalPrice),
-      currency: 'ETB',
-      tx_ref: txRef,
-    });
-    console.log('Using key:', process.env.CHAPA_SECRET_KEY);
+    const nameParts = customerName.split(' ');
+    const firstName = nameParts[0] || 'Guest';
+    const lastName = nameParts[1] || 'Customer';
 
     const response = await axios.post(
       'https://api.chapa.co/v1/transaction/initialize',
       {
         first_name: firstName,
         last_name: lastName,
-        email: 'nahom@gmail.com',
+        email: customerEmail,
         amount: String(order.totalPrice),
         currency: 'ETB',
         tx_ref: txRef,
-        callback_url: `http://localhost:5000/api/payment/verify/${txRef}`,
-        return_url: `http://localhost:5173/order-success`,
+        callback_url: `${process.env.SERVER_URL}/api/payment/verify/${txRef}`,
+        return_url: `${process.env.CLIENT_URL}/order-success`,
         customization: {
           title: 'Gebeya Maekel',
           description: 'Payment for your order',
@@ -53,21 +42,16 @@ exports.initializePayment = async (req, res) => {
       }
     );
 
-    console.log('Chapa response:', response.data);
-
     order.txRef = txRef;
     await order.save();
 
     res.json({ checkoutUrl: response.data.data.checkout_url });
   } catch (error) {
-    console.error('Chapa full error:', JSON.stringify(error.response?.data, null, 2));
-    console.error('Status:', error.response?.status);
-    console.error('Message:', error.message);
+    console.error('Chapa error:', error.response?.data || error.message);
     res.status(500).json({ message: error.response?.data?.message || error.message });
   }
 };
 
-// Verify payment
 exports.verifyPayment = async (req, res) => {
   try {
     const { txRef } = req.params;
@@ -91,7 +75,6 @@ exports.verifyPayment = async (req, res) => {
 
     res.redirect(`http://localhost:5173/order-success`);
   } catch (error) {
-    console.error('Verify error:', error.response?.data || error.message);
     res.status(500).json({ message: error.message });
   }
 };

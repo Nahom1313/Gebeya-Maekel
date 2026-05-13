@@ -19,7 +19,8 @@ exports.register = async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
-      isAdmin: user.isAdmin, // 👈 added
+      isAdmin: user.isAdmin,
+      isDelivery: user.isDelivery,
       token
     });
   } catch (error) {
@@ -44,7 +45,8 @@ exports.login = async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
-      isAdmin: user.isAdmin, // 👈 added
+      isAdmin: user.isAdmin,
+      isDelivery: user.isDelivery,
       token
     });
   } catch (error) {

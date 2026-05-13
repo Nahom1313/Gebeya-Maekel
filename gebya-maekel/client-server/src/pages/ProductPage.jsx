@@ -4,7 +4,20 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../redux/slices/cartSlice';
 import { addToWishlist, removeFromWishlist } from '../redux/slices/wishlistSlice';
 import { useTranslation } from 'react-i18next';
+import ProductDetailSkeleton from '../components/ProductDetailSkeleton';
 import axios from 'axios';
+import API_URL from '../config/api';
+
+// Simple Star Rating Helper
+const StarRating = ({ rating }) => {
+  return (
+    <div className="flex text-yellow-400 text-xs">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <span key={star}>{star <= rating ? '★' : '☆'}</span>
+      ))}
+    </div>
+  );
+};
 
 const ProductPage = () => {
   const { id } = useParams();
@@ -26,7 +39,7 @@ const ProductPage = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:5000/api/products/${id}`);
+        const { data } = await axios.get(`${API_URL}/api/products/${id}`);
         setProduct(data);
         setLoading(false);
       } catch (err) {
@@ -48,11 +61,7 @@ const ProductPage = () => {
     else dispatch(addToWishlist(product));
   };
 
-  if (loading) return (
-    <div className="flex justify-center items-center h-64 dark:bg-gray-900">
-      <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-yellow-400"></div>
-    </div>
-  );
+  if (loading) return <ProductDetailSkeleton />;
 
   if (error) return (
     <div className="text-center text-red-500 mt-10 px-4 dark:bg-gray-900 min-h-screen">{error}</div>
@@ -162,11 +171,57 @@ const ProductPage = () => {
                   ))}
                 </div>
               )}
+              
               {activeTab === 'reviews' && (
-                <div className="text-center py-6">
-                  <p className="text-4xl mb-2">⭐</p>
-                  <p className="text-gray-500 dark:text-gray-400">{t('product.no_reviews')}</p>
+                /* REPLACE STARTS HERE */
+                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow p-6">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
+                    💬 Customer Reviews ({product.numReviews})
+                  </h3>
+                  {product.reviews.length === 0 ? (
+                    <div className="text-center py-8">
+                      <p className="text-4xl mb-3">💬</p>
+                      <p className="text-gray-400">No reviews yet. Be the first!</p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-4 max-h-96 overflow-y-auto">
+                      {product.reviews.map(review => (
+                        <div
+                          key={review._id}
+                          className="border border-gray-100 dark:border-gray-700 rounded-xl p-4 hover:border-yellow-400 transition"
+                        >
+                          <div className="flex justify-between items-start mb-2">
+                            <div className="flex items-center gap-2">
+                              <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center font-bold text-gray-900 text-sm">
+                                {review.name.charAt(0).toUpperCase()}
+                              </div>
+                              <div>
+                                <p className="font-semibold text-gray-800 dark:text-white text-sm">
+                                  {review.name}
+                                </p>
+                                {review.isVerified && (
+                                  <span className="flex items-center gap-1 text-xs text-green-600 dark:text-green-400 font-medium">
+                                    ✅ Verified Purchase
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            <p className="text-gray-400 text-xs">
+                              {new Date(review.createdAt).toLocaleDateString()}
+                            </p>
+                          </div>
+                          <div className="mb-2">
+                            <StarRating rating={review.rating} />
+                          </div>
+                          <p className="text-gray-600 dark:text-gray-400 text-sm mt-2 leading-relaxed">
+                            {review.comment}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
+                /* REPLACE ENDS HERE */
               )}
             </div>
           </div>

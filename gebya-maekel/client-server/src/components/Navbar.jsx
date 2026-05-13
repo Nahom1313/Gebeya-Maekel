@@ -75,9 +75,17 @@ const Navbar = () => {
             )}
           </Link>
 
+          {/* Admin Link */}
           {user?.isAdmin && (
             <Link to="/admin" className="hover:text-yellow-400 transition">
               ⚙️ {t('nav.admin')}
+            </Link>
+          )}
+
+          {/* 👇 Added Desktop Delivery Link */}
+          {user?.isDelivery && (
+            <Link to="/delivery" className="hover:text-yellow-400 transition">
+              🚚 {t('nav.delivery') || 'Deliveries'}
             </Link>
           )}
 
@@ -106,7 +114,7 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Mobile Right Side */}
+        {/* Mobile Right Side Icons */}
         <div className="flex md:hidden items-center gap-2">
           <LangButton mobile />
           <button
@@ -140,7 +148,7 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Dropdown */}
+      {/* Mobile Dropdown Menu */}
       {menuOpen && (
         <div className="md:hidden mt-4 flex flex-col gap-3 bg-gray-800 dark:bg-gray-900 rounded-xl px-6 py-4">
           {user?.isAdmin && (
@@ -148,6 +156,14 @@ const Navbar = () => {
               ⚙️ {t('nav.admin')}
             </Link>
           )}
+          
+          {/* 👇 Added Mobile Delivery Link (Inside Auth Check) */}
+          {user?.isDelivery && (
+            <Link to="/delivery" onClick={() => setMenuOpen(false)} className="hover:text-yellow-400 transition py-1">
+              🚚 {t('nav.delivery') || 'Deliveries'}
+            </Link>
+          )}
+
           {user ? (
             <>
               <Link to="/profile" onClick={() => setMenuOpen(false)} className="hover:text-yellow-400 transition py-1">

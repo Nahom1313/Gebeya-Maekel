@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from '../redux/slices/authSlice';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
+import API_URL from '../config/api';
 
 const ProfilePage = () => {
   const dispatch = useDispatch();
@@ -18,7 +19,7 @@ const ProfilePage = () => {
   const handleSubmit = async () => {
     try {
       setLoading(true); setError('');
-      const { data } = await axios.put('http://localhost:5000/api/auth/profile', form, { headers: { Authorization: `Bearer ${user.token}` } });
+      const { data } = await axios.put(`${API_URL}/api/auth/profile`, form, { headers: { Authorization: `Bearer ${user.token}` } });
       dispatch(setUser({ ...data, token: user.token }));
       setSuccess(t('profile.success'));
       setLoading(false);

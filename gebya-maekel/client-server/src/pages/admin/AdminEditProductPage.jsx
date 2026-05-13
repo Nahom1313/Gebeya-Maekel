@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-
+import API_URL from '../../config/api';
 const categories = ['Clothing', 'Food', 'Kitchen', 'Footwear', 'Jewelry', 'Art', 'Electronics', 'Other'];
 
 const AdminEditProductPage = () => {
@@ -18,7 +18,7 @@ const AdminEditProductPage = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:5000/api/products/${id}`);
+        const { data } = await axios.get(`${API_URL}/api/products/${id}`);
         setForm({ name: data.name, description: data.description, price: data.price, category: data.category, image: data.image });
       } catch (err) {
         setError(err.message);
@@ -40,7 +40,7 @@ const AdminEditProductPage = () => {
       Object.entries(form).forEach(([k, v]) => formData.append(k, v));
       if (imageFile) formData.append('image', imageFile);
 
-      await axios.put(`http://localhost:5000/api/products/${id}`, formData, {
+      await axios.put(`${API_URL}/api/products/${id}`, formData, {
         headers: { Authorization: `Bearer ${user.token}`, 'Content-Type': 'multipart/form-data' },
       });
       navigate('/admin/products');
